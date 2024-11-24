@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 1</title>
+    <link rel="stylesheet" href="css/style.css"> <!-- Link to CSS file if needed -->
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: auto;
+            margin: 0;
+            font-family: Arial, sans-serif;
+
+            /* Background Image */
+            background-image: url('assets/background.png'); /* Path to your background image */
+            background-size: cover; /* Ensures the image covers the entire viewport */
+            background-position: center; /* Center the background image */
+            background-repeat: no-repeat; /* Do not repeat the image */
+            height: auto;
+        }
+
+        .profile-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Style for circular profile image */
+        .profile-container img {
+            width: 100px; /* Profile image width */
+            height: 100px; /* Profile image height */
+            border-radius: 50%; /* Makes the image circular */
+            object-fit: cover; /* Ensures the image fits within the circle */
+            margin-bottom: 15px; /* Space between image and username */
+            border: 2px solid white; /* Optional: adds a white border around the image */
+        }
+
+        .profile-container h1 {
+            font-size: 24px;
+            margin: 10px 0;
+            color: rgb(0, 0, 0); /* Make text readable over the background */
+        }
+
+        .balance {
+            font-size: 36px; /* Increase the font size */
+            margin-bottom: 20px;
+            color: black; /* Keep the text readable */
+            font-weight: bold; /* Make the text bold */
+        }
+
+        .menu-container {
+            background-color: rgb(0, 0, 0); /* Dark background for the menu */
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .menu-container a {
+            color: white;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .menu-container img {
+            width: 30px; /* Icon size */
+            margin-bottom: 5px;
+        }
+
+        .menu-container span {
+            display: block;
+            font-size: 12px; /* Text size for menu items */
+        }
+
+        .animations {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Ensures images don't overflow outside the container */
+            height: 400px; /* Set a fixed height for the carousel */
+            margin-top: 20px;
+            margin-bottom: 150px;
+            border-radius: 20px;
+            position: relative; /* Enables positioning for inner elements */
+            margin: 5px;
+        }
+
+        .carousel-images {
+            display: flex;
+            transition: transform 0.5s ease-in-out; /* Smooth swipe effect */
+        }
+
+        .carousel-images img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            margin-bottom: 150px;
+            flex-shrink: 0; /* Prevent images from shrinking */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Profile Section -->
+    <div class="profile-container">
+        <!-- Circular Profile Image -->
+        <img src="assets/profile-picture.png" alt="Profile Image"> <!-- Path to profile picture -->
+        <h1 id="profile-username"><strong>User</strong></h1> <!-- Only the username will be displayed -->
+        <div class="balance">$SKY <span id="user-balance">80.00</span></div> <!-- Placeholder for balance -->
+    </div>
+
+    <!-- Animation Images -->
+    <div class="animations">
+        <div class="carousel-images">
+            <img src="assets/animation1.jpg" alt="Animation 1">
+            <img src="assets/animation1.jpg" alt="Animation 2">
+            <img src="assets/animation1.jpg" alt="Animation 3">
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Menu -->
+    <div class="menu-container">
+        <a href="index.html">
+            <img src="assets/home.png" alt="Home">
+            <span>Home</span>
+        </a>
+        <a href="earn.html">
+            <img src="assets/earn.png" alt="Earn">
+            <span>Earn</span>
+        </a>
+        <a href="frens.html">
+            <img src="assets/frens.png" alt="Frens">
+            <span>Frens</span>
+        </a>
+        <a href="wallet.html">
+            <img src="assets/wallet.png" alt="Wallet">
+            <span>Wallet</span>
+        </a>
+    </div>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { db } from './firebase.js'; // Import Firebase Firestore from firebase.js
+        import { doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";  // Import doc and setDoc
+
+        // LocalStorage and carousel setup
+        const username = localStorage.getItem('username') || 'Guest';
+        const userBalance = localStorage.getItem('balance') || 80;
+        document.getElementById('profile-username').textContent = username;
+        document.getElementById('user-balance').textContent = userBalance;
+
+        const carousel = document.querySelector('.carousel-images');
+        const images = document.querySelectorAll('.carousel-images img');
+        let index = 0;
+
+        function showNextImage() {
+            index = (index + 1) % images.length;
+            carousel.style.transform = `translateX(-${index * 100}%)`;
+        }
+
+        setInterval(showNextImage, 5000);
+
+        // Get userId and username from localStorage or Telegram WebApp
+        const userId = localStorage.getItem('userId') || 'defaultUserId'; // Change defaultUserId to a dynamic fallback if needed
+
+        // Save user data to Firebase Firestore (using dynamic values)
+        async function saveUserData(userId, username) {
+            try {
+                const userDocRef = doc(db, 'users', userId.toString());
+                await setDoc(userDocRef, {
+                    username: username,
+                    dateAdded: new Date().toISOString(),
+                });
+                console.log("User data saved successfully!");
+            } catch (error) {
+                console.error("Error saving user data:", error);
+            }
+        }
+
+        // Example: Save data with dynamically fetched username and userId
+        saveUserData(userId, username);
+    </script>
+
+</body>
+</html>

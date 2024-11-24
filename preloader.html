@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <style>
+        /* Preloader styles */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+            margin: 0;
+            background-color: #000; /* Background color */
+            overflow: hidden; /* Prevent scrolling */
+        }
+
+        #preloader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        #preloader img {
+            max-width: 50%; /* Image will take up to 50% of the viewport width */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        /* Media query for larger screens */
+        @media (min-width: 768px) {
+            #preloader img {
+                max-width: 200px; /* Larger size for tablets and desktops */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="preloader">
+        <img src="assets/preloader.gif" alt="Loading..."> <!-- Add your preloader image here -->
+    </div>
+
+    <script>
+        // Function to handle the preloader display
+        function showPreloader() {
+            const preloader = document.getElementById('preloader');
+
+            // Show preloader for 5 seconds
+            setTimeout(() => {
+                preloader.style.display = 'none'; // Hide preloader
+                checkForUsername(); // Check if username exists
+            }, 5000); // 5000ms = 5 seconds
+        }
+
+        // Check if username exists in local storage
+        function checkForUsername() {
+            const savedUsername = localStorage.getItem('username');
+            if (savedUsername) {
+                // Redirect to main app page if username exists
+                window.location.href = 'index.html';
+            } else {
+                // Redirect to username creation page if no username found
+                window.location.href = 'create-username.html';
+            }
+        }
+
+        // Call the function when the window is loaded
+        window.onload = showPreloader;
+    </script>
+
+</body>
+</html>
